@@ -13,25 +13,23 @@ yarn add sugarstate
 Imagine you have an `<EmailVerificationStatus />` component and you want to have a place to hold state as well as methods to update that state. You can use `sugarstate` to create a custom hook that provides this.
 
 ```tsx
-import { type GenericControls, useProvideControls, useControl } from "sugarstate";
+import { useProvideControls, useControl } from "sugarstate";
 
 export function useEmailControls() {
-	const [control, setState] = useProvideControls<EmailControlState>({
+	const [control, setState] = useProvideControls({
 		verified: false,
 		isLoading: false,
 	});
 
-	const verify = useCallback(async () => {
-		setState(old => ({ ...old, isLoading: true }));
-
-		const isVerified = await doSomeAsyncThing();
-
-		setState(old => ({ verified: isVerified, isLoading: false }));
-	}, [setState]);
-
 	return {
 		...control,
-		verify,
+		verify: async () => {
+			setState(old => ({ ...old, isLoading: true }));
+
+			const isVerified = await doSomeAsyncThing();
+
+			setState(old => ({ verified: isVerified, isLoading: false }));
+		},
 	};
 }
 
@@ -42,6 +40,8 @@ Then you can use this hook in your component like so:
 
 ```tsx
 function Status({ control }: { control: EmailControls }) {
+	// useControl allows you to read the state from the control
+	// object, and will re-render when the state changes
 	const { verified, isLoading } = useControl(control);
 
 	if (isLoading) {
@@ -74,7 +74,7 @@ You can also use state selectors to only re-render when a specific part of the s
 ```tsx
 function Status({ control }: { control: EmailControls }) {
 	// This component will only re-render when the `verified` property changes
-	const verified = useControlSelect(control, state => state.verified);
+	const verified = useControl(control, state => state.verified);
 
 	return <div>{verified ? "Email is verified" : "Email is not verified"}</div>;
 }
