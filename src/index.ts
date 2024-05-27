@@ -36,8 +36,6 @@ export function useProvideControls<T>(
 		subscribe: useCallback(callback => {
 			subscriptions.current.add(callback);
 
-			console.log(subscriptions.current);
-
 			return () => {
 				subscriptions.current.delete(callback);
 			};
