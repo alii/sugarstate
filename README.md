@@ -1,6 +1,6 @@
 # `sugarstate`
 
-sugarstate is a nice little state library for React that allows you to lift state up to a parent component, but not require the parent to re-render when the state changes. It's super simple to use and has no dependencies.
+`sugarstate` is a nice little state library for React that allows you to lift state up to a parent component, but not require the parent to re-render when the state changes. It's super simple to use and has no dependencies.
 
 ## Installation
 
@@ -80,4 +80,8 @@ function Status({ control }: { control: EmailControls }) {
 }
 ```
 
-Note: I've used the word 'control' here to refer to the object returned from `useEmailControls`. This is because it contains both the state and the methods to update that state. You can call it whatever you like.
+Note that the value returned from the selector function CAN be computed, but it must be a primitive value (or an object reference) to work correctly. This is because `sugarstate` eventually calls `Object.is` to compare the previous and current values.
+
+---
+
+###### Note: I've used the word 'control' here to refer to the object returned from `useEmailControls`. This is because it contains both the state and the methods to update that state. You can call it whatever you like.
